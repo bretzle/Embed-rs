@@ -2,6 +2,8 @@
 
 pub mod gpio;
 pub mod timer;
+pub mod led;
+pub mod lcd;
 
 use crate::gpio::*;
 use crate::timer::*;
