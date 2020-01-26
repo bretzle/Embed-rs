@@ -14,23 +14,37 @@ use stmlib::*;
 #[rt::entry]
 fn main() -> ! {
     unsafe {
-        let mut num = 1;
-        let delay = 100;
-        let stk = PERIPHERALS.take_systick();
+        // knight_rider();
+        basic_lcd();
+        loop {}
+    }
+}
 
-        init_leds();
+unsafe fn knight_rider() {
+    let mut num = 1;
+    let delay = 100;
+    let stk = PERIPHERALS.take_systick();
 
-        loop {
-            for _ in 0..9 {
-                light_led(num);
-                stk.delay_ms(delay);
-                num = num << 1;
-            }
-            for _ in 0..9 {
-                light_led(num);
-                stk.delay_ms(delay);
-                num = num >> 1;
-            }
+    init_leds();
+
+    loop {
+        for _ in 0..9 {
+            light_led(num);
+            stk.delay_ms(delay);
+            num = num << 1;
+        }
+        for _ in 0..9 {
+            light_led(num);
+            stk.delay_ms(delay);
+            num = num >> 1;
         }
     }
+}
+
+unsafe fn basic_lcd() {
+    lcd::init_lcd();
+    lcd::lcd_set_postion(1, 5);
+    lcd::lcd_print_string("hello");
+    lcd::lcd_home();
+    lcd::lcd_print_num(0xFFFF_FFFF);
 }
