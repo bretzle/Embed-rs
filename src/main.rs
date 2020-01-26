@@ -8,19 +8,46 @@ extern crate panic_halt; // you can put a breakpoint on `rust_begin_unwind` to c
                          // extern crate panic_semihosting; // logs messages to the host stderr; requires a debugger
 
 use cortex_m_rt as rt;
-use stmlib::timer::SysTick;
+use stmlib::gpio::GPIOB;
 use stmlib::*;
 
 #[rt::entry]
 fn main() -> ! {
     unsafe {
-        {
-            let a: SysTick = PERIPHERALS.take_systick();
-            a.delay_ms(5000);
+        let mut num = 1;
+        let delay = 100;
+        let stk = PERIPHERALS.take_systick();
+
+        init_leds();
+
+        loop {
+            for _ in 0..9 {
+                light_led(num);
+                stk.delay_ms(delay);
+                num = num << 1;
+            }
+            for _ in 0..9 {
+                light_led(num);
+                stk.delay_ms(delay);
+                num = num >> 1;
+            }
         }
-        let b = PERIPHERALS.take_systick();
-        core::mem::drop(b);
-        let c = PERIPHERALS.take_systick();
-        loop {}
     }
+}
+
+unsafe fn init_leds() {
+    let mut gpio: GPIOB = PERIPHERALS.take_gpiob();
+
+    gpio.set_moder(0x55155400);
+}
+
+unsafe fn light_led(num: u32) {
+    let mut gpio: GPIOB = PERIPHERALS.take_gpiob();
+
+    gpio.clear_odr();
+
+    let a = (num & 0x3F) << 5;
+    let b = (num & 0x3C0) << 6;
+
+    gpio.set_odr(a | b);
 }
