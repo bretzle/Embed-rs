@@ -12,8 +12,8 @@ pub unsafe fn init_lcd() {
     let mut a: GPIOA = PERIPHERALS.take_gpioa();
     let mut c: GPIOC = PERIPHERALS.take_gpioc();
 
-    a.set_moder(0x555500);
-    c.set_moder(0x150000);
+    a.set_moder_bits(0x555500);
+    c.set_moder_bits(0x150000);
 
     drop(a);
     drop(c);

@@ -1,18 +1,18 @@
-use crate::gpio::GPIOC;
+use crate::gpio::GPIO;
 use crate::PERIPHERALS;
 
 pub unsafe fn init_keypad() {
-    let mut gpio: GPIOC = PERIPHERALS.take_gpioc();
+    let mut gpio = PERIPHERALS.take_gpioc();
 
-    gpio.set_moder(0x55);
+    gpio.set_moder_bits(0x55);
 
     let mut val = gpio.get_pupdr();
 
-    gpio.set_pupdr(0x1);
+    gpio.set_pupdr_bits(0x1);
 
     val = gpio.get_pupdr();
 
-    gpio.set_pupdr(0x10);
+    gpio.set_pupdr_bits(0x10);
 
     val = gpio.get_pupdr();
 
