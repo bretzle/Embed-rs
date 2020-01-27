@@ -1,6 +1,7 @@
 #![no_std]
 
 pub mod gpio;
+pub mod keypad;
 pub mod lcd;
 pub mod led;
 pub mod timer;

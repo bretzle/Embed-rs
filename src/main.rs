@@ -15,7 +15,8 @@ use stmlib::*;
 fn main() -> ! {
     unsafe {
         // knight_rider();
-        basic_lcd();
+        // basic_lcd();
+        lcd_key();
         loop {}
     }
 }
@@ -47,4 +48,21 @@ unsafe fn basic_lcd() {
     lcd::lcd_print_string("hello");
     lcd::lcd_home();
     lcd::lcd_print_num(0xFFFF_FFFF);
+}
+
+unsafe fn lcd_key() {
+    lcd::init_lcd();
+    keypad::init_keypad();
+
+    lcd::lcd_clear();
+
+    loop {
+        let letter = keypad::keypad_getchar();
+
+        match letter {
+            '*' => lcd::lcd_clear(),
+            '#' => lcd::lcd_home(),
+            _ => lcd::lcd_print_char(letter),
+        }
+    }
 }

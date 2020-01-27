@@ -2,6 +2,7 @@ use crate::gpio::*;
 use crate::PERIPHERALS;
 use core::mem::drop;
 use numtoa::NumToA;
+use core::str::from_utf8;
 
 const RS_SET: u16 = 1 << 8;
 const RW_SET: u16 = 1 << 9;
@@ -80,4 +81,10 @@ pub unsafe fn lcd_print_string(string: &str) {
 pub unsafe fn lcd_print_num(num: u32) {
     let mut buffer = [0u8; 10];
     lcd_print_string(num.numtoa_str(10, &mut buffer));
+}
+
+pub unsafe fn lcd_print_char(letter: char) {
+    let mut buffer = [0u8; 1];
+    buffer[0] = letter as u8;
+    lcd_print_string(from_utf8(&buffer).unwrap_or("CharError"));
 }
