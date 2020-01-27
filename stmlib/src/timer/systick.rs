@@ -2,6 +2,7 @@ use crate::FREQ;
 use crate::PERIPHERALS;
 use core::ptr;
 
+/// Represents the System Timer
 #[repr(C)]
 pub struct SysTick;
 
@@ -35,10 +36,12 @@ impl SysTick {
         false
     }
 
+    /// Blocks the system from doing anything for [delay] milliseconds
     pub fn delay_ms(&self, delay: u32) {
         self.delay_us(delay * 1000);
     }
 
+    /// Blocks the system from doing anything for [delay] microseconds
     pub fn delay_us(&self, delay: u32) {
         unsafe {
             self.disable();
