@@ -9,8 +9,8 @@ pub struct SysTick;
 impl SysTick {
     const CTRL: *mut u32 = 0xE000_E010 as *mut u32;
     const LOAD: *mut u32 = 0xE000_E014 as *mut u32;
-    const VAL: *mut u32 = 0xE000_E018 as *mut u32;
-    const CALIB: *mut u32 = 0xE000_E01C as *mut u32;
+    // const VAL: *mut u32 = 0xE000_E018 as *mut u32;
+    // const CALIB: *mut u32 = 0xE000_E01C as *mut u32;
 
     #[inline(always)]
     unsafe fn disable(&self) {
