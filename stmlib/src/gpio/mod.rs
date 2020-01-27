@@ -9,7 +9,7 @@ pub use gpiob::GPIOB;
 pub use gpioc::GPIOC;
 
 /// Global trait that defines what a GPIO bus can do.
-pub trait GPIO {
+pub trait GPIO: Drop {
     /// Address to the moder register
     const MODER: *mut u32;
     /// Address to the otyper register
