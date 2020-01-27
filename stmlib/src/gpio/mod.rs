@@ -1,3 +1,5 @@
+//! Module that adds support for manipulating the GPIO busses
+
 mod gpioa;
 mod gpiob;
 mod gpioc;
@@ -76,6 +78,7 @@ pub trait GPIO: Drop {
         write(Self::PUPDR, mask);
     }
 
+    /// Clears bits in the PUPDR. Follows RMW.
     unsafe fn clear_pupdr_bits(&mut self, bits: u32) {
         let mask = read(Self::PUPDR) & !bits;
         write(Self::PUPDR, mask);

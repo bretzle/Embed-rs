@@ -1,3 +1,5 @@
+//! A module that adds a basic api for the LCD.
+
 use crate::gpio::*;
 use crate::PERIPHERALS;
 use core::mem::drop;
@@ -8,6 +10,7 @@ const RS_SET: u16 = 1 << 8;
 const RW_SET: u16 = 1 << 9;
 const E_SET: u16 = 1 << 10;
 
+/// Initializes the LCD
 pub unsafe fn init_lcd() {
     let mut a: GPIOA = PERIPHERALS.take_gpioa();
     let mut c: GPIOC = PERIPHERALS.take_gpioc();
@@ -59,30 +62,36 @@ unsafe fn lcd_data(data: u8) {
     stk.delay_ms(2);
 }
 
+/// Clears the LCD display and moves the cursor home
 pub unsafe fn lcd_clear() {
     lcd_cmd_d(0x01, 1520);
 }
 
+/// Moves the cursor back home
 pub unsafe fn lcd_home() {
     lcd_cmd_d(0x02, 1520);
 }
 
+/// Moves the cursor to a given postion
 pub unsafe fn lcd_set_postion(row: u8, col: u8) {
     let cmd = (1 << 7) + (col + (row * 0x40));
     lcd_cmd_d(cmd, 37);
 }
 
+/// Prints a string to the LCD
 pub unsafe fn lcd_print_string(string: &str) {
     for ch in string.bytes() {
         lcd_data(ch);
     }
 }
 
+/// Prints a number to the LCD
 pub unsafe fn lcd_print_num(num: u32) {
     let mut buffer = [0u8; 10];
     lcd_print_string(num.numtoa_str(10, &mut buffer));
 }
 
+/// Prints a char to the LCD
 pub unsafe fn lcd_print_char(letter: char) {
     let mut buffer = [0u8; 1];
     buffer[0] = letter as u8;

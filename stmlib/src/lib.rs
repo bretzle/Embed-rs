@@ -1,5 +1,5 @@
 #![no_std]
-// #![deny(missing_docs)]
+#![deny(missing_docs)]
 
 //! A hardware abstraction layer designed for the stm32f446
 
