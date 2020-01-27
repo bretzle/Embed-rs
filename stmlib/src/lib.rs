@@ -1,7 +1,7 @@
+//! A hardware abstraction layer designed for the stm32f446
+
 #![no_std]
 #![deny(missing_docs)]
-
-//! A hardware abstraction layer designed for the stm32f446
 
 pub mod gpio;
 pub mod keypad;

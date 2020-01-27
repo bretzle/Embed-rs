@@ -5,6 +5,7 @@ use crate::PERIPHERALS;
 use core::mem::drop;
 use numtoa::NumToA;
 use core::str::from_utf8;
+use crate::timer;
 
 const RS_SET: u16 = 1 << 8;
 const RW_SET: u16 = 1 << 9;
@@ -21,9 +22,7 @@ pub unsafe fn init_lcd() {
     drop(a);
     drop(c);
 
-    let stk = PERIPHERALS.take_systick();
-    stk.delay_ms(40);
-    drop(stk);
+    timer::delay_ms(40);
 
     lcd_cmd_d(0x38, 37);
     lcd_cmd_d(0x38, 37);
@@ -35,7 +34,6 @@ pub unsafe fn init_lcd() {
 unsafe fn lcd_cmd_d(instruction: u8, delay: u32) {
     let mut a: GPIOA = PERIPHERALS.take_gpioa();
     let mut c: GPIOC = PERIPHERALS.take_gpioc();
-    let stk = PERIPHERALS.take_systick();
 
     c.set_clear_odr(RS_SET | RW_SET, E_SET);
 
@@ -44,13 +42,12 @@ unsafe fn lcd_cmd_d(instruction: u8, delay: u32) {
 
     c.clear_odr_bits(E_SET);
 
-    stk.delay_us(delay);
+    timer::delay_us(delay);
 }
 
 unsafe fn lcd_data(data: u8) {
     let mut a: GPIOA = PERIPHERALS.take_gpioa();
     let mut c: GPIOC = PERIPHERALS.take_gpioc();
-    let stk = PERIPHERALS.take_systick();
 
     c.set_clear_odr(RW_SET, RS_SET | E_SET);
 
@@ -59,7 +56,7 @@ unsafe fn lcd_data(data: u8) {
 
     c.clear_odr_bits(E_SET);
 
-    stk.delay_ms(2);
+    timer::delay_ms(2);
 }
 
 /// Clears the LCD display and moves the cursor home
