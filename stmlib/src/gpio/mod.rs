@@ -47,7 +47,7 @@ pub trait GPIO: Drop {
 
     /// Returns the current value of the ODR.
     unsafe fn read_odr(&self) -> u32 {
-        read(Self::ODR)
+        read(Self::ODR) & 0xFFFF
     }
 
     /// Clears bits in the ODR using the BSRR.
@@ -82,5 +82,10 @@ pub trait GPIO: Drop {
     unsafe fn clear_pupdr_bits(&mut self, bits: u32) {
         let mask = read(Self::PUPDR) & !bits;
         write(Self::PUPDR, mask);
+    }
+
+    /// Returns the current value of the IDR.
+    unsafe fn get_idr(&self) -> u32 {
+        read(Self::IDR) & 0xFFFF
     }
 }
