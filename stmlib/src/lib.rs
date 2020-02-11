@@ -7,12 +7,14 @@ pub mod gpio;
 pub mod keypad;
 pub mod lcd;
 pub mod led;
+mod ptr_util;
 pub mod timer;
 
 use crate::gpio::*;
 use crate::timer::*;
 use core::mem::replace;
 use core::ptr;
+use ptr_util::Ptr;
 
 /// Default clock frequency
 pub const FREQ: u32 = 16_000_000;
@@ -22,9 +24,10 @@ pub const FREQ: u32 = 16_000_000;
 /// it is readded to the struct and can be taken by another actor.
 pub struct Peripherals {
     systick: Option<SysTick>,
-    gpioa: Option<GPIOA>,
-    gpiob: Option<GPIOB>,
-    gpioc: Option<GPIOC>,
+    gpioa: Option<Ptr<GPIO>>,
+    gpiob: Option<Ptr<GPIO>>,
+    gpioc: Option<Ptr<GPIO>>,
+    tim2: Option<*mut TIM2>,
 }
 
 impl Peripherals {
@@ -37,31 +40,41 @@ impl Peripherals {
     }
 
     /// Take ownership of GPIOB
-    pub fn take_gpiob(&mut self) -> GPIOB {
-        unsafe { ptr::write(Self::RCC, ptr::read(Self::RCC) | 0x2) }
-        let p = replace(&mut self.gpiob, None);
-        p.unwrap()
+    pub fn take_gpiob(&mut self) -> GPIO {
+        unsafe {
+            ptr::write(Self::RCC, ptr::read(Self::RCC) | 0x2);
+            let p = replace(&mut self.gpiob, None);
+            let t = *p.unwrap().as_pointer();
+            t
+        }
     }
 
     /// Take ownership of GPIOA
-    pub fn take_gpioa(&mut self) -> GPIOA {
-        unsafe { ptr::write(Self::RCC, ptr::read(Self::RCC) | 0x1) }
-        let p = replace(&mut self.gpioa, None);
-        p.unwrap()
+    pub fn take_gpioa(&mut self) -> GPIO {
+        unsafe {
+            ptr::write(Self::RCC, ptr::read(Self::RCC) | 0x1);
+            let p = replace(&mut self.gpioa, None);
+            let t = *p.unwrap().as_pointer();
+            t
+        }
     }
 
     /// Take ownership of GPIOC
-    pub fn take_gpioc(&mut self) -> GPIOC {
-        unsafe { ptr::write(Self::RCC, ptr::read(Self::RCC) | 0x4) }
-        let p = replace(&mut self.gpioc, None);
-        p.unwrap()
+    pub fn take_gpioc(&mut self) -> GPIO {
+        unsafe {
+            ptr::write(Self::RCC, ptr::read(Self::RCC) | 0x4);
+            let p = replace(&mut self.gpioc, None);
+            let t = *p.unwrap().as_pointer();
+            t
+        }
     }
 }
 
 /// A public instance of all system peripherals
 pub static mut PERIPHERALS: Peripherals = Peripherals {
     systick: Some(SysTick),
-    gpioa: Some(GPIOA),
-    gpiob: Some(GPIOB),
-    gpioc: Some(GPIOC),
+    gpioa: Some(Ptr::cnew(0x4002_0000 as *mut GPIO)),
+    gpiob: Some(Ptr::cnew(0x4002_0400 as *mut GPIO)),
+    gpioc: Some(Ptr::cnew(0x4002_0800 as *mut GPIO)),
+    tim2: Some(0x40000000 as *mut TIM2),
 };

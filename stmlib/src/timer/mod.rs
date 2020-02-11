@@ -20,3 +20,15 @@ pub fn delay_us(time: u32) {
         stk.delay_us(time);
     }
 }
+
+/// Timer 2
+#[repr(C)]
+pub struct TIM2 {
+    /// TODO
+    pub ccr1: u32,
+}
+
+/// Trait that represents a timer
+pub trait Timer: Drop {
+
+}

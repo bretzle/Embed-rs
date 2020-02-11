@@ -14,8 +14,8 @@ const E_SET: u16 = 1 << 10;
 /// Initializes the LCD
 pub fn init_lcd() {
     unsafe {
-        let mut a: GPIOA = PERIPHERALS.take_gpioa();
-        let mut c: GPIOC = PERIPHERALS.take_gpioc();
+        let mut a = PERIPHERALS.take_gpioa();
+        let mut c = PERIPHERALS.take_gpioc();
 
         a.set_moder_bits(0x555500);
         c.set_moder_bits(0x150000);
@@ -34,8 +34,8 @@ pub fn init_lcd() {
 }
 
 unsafe fn lcd_cmd_d(instruction: u8, delay: u32) {
-    let mut a: GPIOA = PERIPHERALS.take_gpioa();
-    let mut c: GPIOC = PERIPHERALS.take_gpioc();
+    let mut a = PERIPHERALS.take_gpioa();
+    let mut c = PERIPHERALS.take_gpioc();
 
     c.set_clear_odr(RS_SET | RW_SET, E_SET);
 
@@ -48,8 +48,8 @@ unsafe fn lcd_cmd_d(instruction: u8, delay: u32) {
 }
 
 unsafe fn lcd_data(data: u8) {
-    let mut a: GPIOA = PERIPHERALS.take_gpioa();
-    let mut c: GPIOC = PERIPHERALS.take_gpioc();
+    let mut a = PERIPHERALS.take_gpioa();
+    let mut c = PERIPHERALS.take_gpioc();
 
     c.set_clear_odr(RW_SET, RS_SET | E_SET);
 

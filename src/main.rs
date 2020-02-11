@@ -17,7 +17,11 @@ fn main() -> ! {
     unsafe {
         // knight_rider();
         // basic_lcd();
-        lcd_key();
+        // lcd_key();
+
+        let g = PERIPHERALS.take_gpioa();
+        let addr = &g;
+
         loop {}
     }
 }

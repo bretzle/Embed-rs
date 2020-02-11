@@ -1,6 +1,5 @@
 //! A module that adds a basic api for the LED array.
 
-use crate::gpio::GPIO;
 use crate::PERIPHERALS;
 
 /// Initializes the LED array

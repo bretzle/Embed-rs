@@ -1,91 +1,102 @@
 //! Module that adds support for manipulating the GPIO busses
 
-mod gpioa;
-mod gpiob;
-mod gpioc;
+// mod gpioa;
+// mod gpiob;
+// mod gpioc;
 
 use core::ptr::{read, write};
 
-pub use gpioa::GPIOA;
-pub use gpiob::GPIOB;
-pub use gpioc::GPIOC;
+// pub use gpioa::GPIOA;
+// pub use gpiob::GPIOB;
+// pub use gpioc::GPIOC;
 
 /// Global trait that defines what a GPIO bus can do.
-pub trait GPIO: Drop {
+pub struct GPIO {
     /// Address to the moder register
-    const MODER: *mut u32;
+    pub moder: *mut u32,
     /// Address to the otyper register
-    const OTYPER: *mut u32;
+    pub otyper: *mut u32,
     /// Address to the ospeedr register
-    const OSPEEDR: *mut u32;
+    pub ospeedr: *mut u32,
     /// Address to the pupdr register
-    const PUPDR: *mut u32;
+    pub pupdr: *mut u32,
     /// Address to the idr register
-    const IDR: *mut u32;
+    pub idr: *mut u32,
     /// Address to the odr register
-    const ODR: *mut u32;
+    pub odr: *mut u32,
     /// Address to the bsrr register
-    const BSRR: *mut u32;
+    pub bsrr: *mut u32,
     /// Address to the lckr register
-    const LCKR: *mut u32;
+    pub lckr: *mut u32,
     /// Address to the afrl register
-    const AFRL: *mut u32;
+    pub afrl: *mut u32,
     /// Address to the afrh register
-    const AFRH: *mut u32;
+    pub afrh: *mut u32,
+}
 
+impl GPIO {
     /// Sets bits in the MODER. Follows RMW.
-    unsafe fn set_moder_bits(&mut self, bits: u32) {
-        let mask = read(Self::MODER) | bits;
-        write(Self::MODER, mask);
+    pub unsafe fn set_moder_bits(&mut self, bits: u32) {
+        let mask = read(self.moder) | bits;
+        write(self.moder, mask);
     }
 
     /// Clears bits in the MODER. Follows RMW.
-    unsafe fn clear_moder_bits(&mut self, bits: u32) {
-        let mask = read(Self::MODER) & !bits;
-        write(Self::MODER, mask);
+    pub unsafe fn clear_moder_bits(&mut self, bits: u32) {
+        let mask = read(self.moder) & !bits;
+        write(self.moder, mask);
     }
 
     /// Returns the current value of the ODR.
-    unsafe fn read_odr(&self) -> u32 {
-        read(Self::ODR) & 0xFFFF
+    pub unsafe fn read_odr(&self) -> u32 {
+        read(self.odr) & 0xFFFF
     }
 
     /// Clears bits in the ODR using the BSRR.
-    unsafe fn clear_odr_bits(&mut self, val: u16) {
+    pub unsafe fn clear_odr_bits(&mut self, val: u16) {
         let mask = (val as u32) << 16;
-        write(Self::BSRR, mask);
+        write(self.bsrr, mask);
     }
 
     /// Sets bits in the ODR using the BSRR.
-    unsafe fn set_odr_bits(&mut self, val: u16) {
-        write(Self::BSRR, val as u32);
+    pub unsafe fn set_odr_bits(&mut self, val: u16) {
+        write(self.bsrr, val as u32);
     }
 
     /// Sets and clears bits in the ODR in one operation.
-    unsafe fn set_clear_odr(&mut self, clear: u16, set: u16) {
+    pub unsafe fn set_clear_odr(&mut self, clear: u16, set: u16) {
         let mask = ((clear as u32) << 16) | set as u32;
-        write(Self::BSRR, mask);
+        write(self.bsrr, mask);
     }
 
     /// Returns the current vlaue of the PUPDR
-    unsafe fn get_pupdr(&self) -> u32 {
-        read(Self::PUPDR)
+    pub unsafe fn get_pupdr(&self) -> u32 {
+        read(self.pupdr)
     }
 
     /// Sets bits in the PUPDR. Follows RMW.
-    unsafe fn set_pupdr_bits(&mut self, bits: u32) {
-        let mask = read(Self::PUPDR) | bits;
-        write(Self::PUPDR, mask);
+    pub unsafe fn set_pupdr_bits(&mut self, bits: u32) {
+        let mask = read(self.pupdr) | bits;
+        write(self.pupdr, mask);
     }
 
     /// Clears bits in the PUPDR. Follows RMW.
-    unsafe fn clear_pupdr_bits(&mut self, bits: u32) {
-        let mask = read(Self::PUPDR) & !bits;
-        write(Self::PUPDR, mask);
+    pub unsafe fn clear_pupdr_bits(&mut self, bits: u32) {
+        let mask = read(self.pupdr) & !bits;
+        write(self.pupdr, mask);
     }
 
     /// Returns the current value of the IDR.
-    unsafe fn get_idr(&self) -> u32 {
-        read(Self::IDR) & 0xFFFF
+    pub unsafe fn get_idr(&self) -> u32 {
+        read(self.idr) & 0xFFFF
+    }
+}
+
+impl Copy for GPIO {}
+
+impl Clone for GPIO {
+    #[inline(always)]
+    fn clone(&self) -> GPIO {
+        *self
     }
 }
